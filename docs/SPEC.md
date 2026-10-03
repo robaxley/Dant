@@ -159,7 +159,34 @@ It should feel like handing a job to a capable helper, not operating a tool:
 
 ## 8. Money (Dant AI is a Pro feature)
 
-> ⚠️ **Missing.** The original message ended at this heading. Ask the owner for the rest of this section.
+> ⚠️ **Partly missing.** The original message ended at this heading. Only 8a has been decided so far. Ask the owner for the rest (price, ads, etc.).
+
+### 8a. Try before you pay (approved by the owner, 2026-10-03)
+
+People see Dant AI do real work before we ask for anything. We ask for an account only after their first result, and for money only when they want Dant to do more *for* them.
+
+| | Logged out | Free account | Pro |
+|---|---|---|---|
+| Dant AI tasks | 1 free try | 5 per month (resets on the 1st) | Up to 200 per month (fair use) |
+| Full plan + finished work to copy | Yes | Yes | Yes |
+| "Let Dant do it for me" (post, send, schedule, open a pull request) | No | No | Yes |
+| Connect your stuff | No | No | Yes |
+| Dant remembers your business | No | No | Yes |
+| Works in the background | No | No | Yes |
+
+- All numbers live in one config file so they can change without code changes.
+- **One task = one goal typed into the big box** (or started from "Use with Dant AI"). Follow-up questions and messages inside a task are free, up to 20 per task. Failed tasks are given back automatically.
+- **The free version is never made worse.** Same quality and the full result as Pro. The difference is what Dant does for you, not how good the work is. Nothing is hidden or blurred.
+- **Logged out:** no sign-up before the first task. After the result: "Like it? Create a free account to save this and get 5 more tasks every month." The task carries over into their account after signing up. A second logged-out try asks them to make a free account and keeps what they typed. Abuse protection: Supabase anonymous sign-in + Cloudflare Turnstile, and at most 3 logged-out tries per network per day.
+- **Free account:** a calm counter near the box ("4 of 5 free tasks left this month"). Running out shows a friendly screen ("They come back on [date]. Want to keep going now? Go Pro.") instead of an error.
+- **Asking for Pro happens only when Pro clearly helps:**
+  - After a result Dant could act on, e.g. "Your posts are ready. Copy them for free, or go Pro and Dant will schedule them for you."
+  - When someone clicks a locked Pro button (it shows a lock + "Pro" label and is never a dead button).
+  - When the free tasks run out.
+  - Every upgrade panel says "Cancel anytime in one click." and has "Not now". Show it at most once per task.
+- **Enforced on the server:** the allowance check, atomic counting (no double-click cheating), and blocking Pro-only actions. RLS: people can only read their own usage.
+- **Words:** "tasks", "free account", "Pro". Never "credits", "tokens", "quota", or "API".
+- No price is shown until the owner sets one. If Stripe isn't built yet, "Go Pro" opens a `/pro` page with a "Tell me when it's ready" email sign-up.
 
 ## Build order
 

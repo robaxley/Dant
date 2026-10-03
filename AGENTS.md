@@ -8,7 +8,8 @@ Read this first. Claude Code reads it through `CLAUDE.md`. Cursor and other assi
 - The full product spec is in `docs/SPEC.md`, and it is the source of truth.
 - Proposals that have **not** been approved yet are in `docs/IDEAS.md`. Don't treat anything there as a requirement unless the owner approves it, and then move it into `SPEC.md`.
 - Open items before step 1:
-  - The spec was cut off. Section 8 "Money" and the "Build order" are missing. Ask the owner for them.
+  - The spec was cut off. Section 8 "Money" is only partly written (8a "Try before you pay" is decided), and the "Build order" is missing. Ask the owner for them.
+- Ready-to-paste feature prompts from the owner live in `docs/prompts/`.
   - The logo files that `public/brand/` should hold are not in the repo yet.
 
 ## Working rules (from the owner)

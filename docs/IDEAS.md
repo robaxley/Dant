@@ -16,6 +16,8 @@
 ## 1. The five biggest ideas
 
 ### 1.1 Let people feel the magic before they pay
+> ✅ **Approved 2026-10-03.** Moved into `SPEC.md` §8a. The Cursor prompt is in `docs/prompts/01-try-before-you-pay.md`.
+
 - **Logged out:** 1 free Dant AI task, with no signup needed. They see the plan and the first piece of finished work.
 - **Free account (one click with Google):** a few tasks a month (for example 5), plus copying any agent or Dant forever.
 - **Pro:** "Do it for me" running in the background, connections (Mailchimp, Instagram, GitHub), memory of your business, and many more tasks.
