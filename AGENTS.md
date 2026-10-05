@@ -6,7 +6,7 @@ Read this first. Claude Code reads it through `CLAUDE.md`. Cursor and other assi
 
 | File | What it is |
 |---|---|
-| `docs/SPEC.md` | **The source of truth** (v2). The product spec plus the step-by-step Build order (§18). |
+| `docs/SPEC.md` | **The source of truth** (v2.1). The product spec plus the step-by-step Build order (§18). §2a sets the rules for how the site should feel. |
 | `docs/PROGRESS.md` | Which build steps are done. Update it at the end of every step. |
 | `docs/prompts/00-start-here.md` | The prompt the owner pastes into Cursor to build the next step. |
 | `docs/IDEAS.md` | Only decisions still waiting on the owner, and ideas for after launch. **Not requirements.** |

@@ -14,6 +14,7 @@ Steps are defined in `docs/SPEC.md` §18.
 | 7 | Community and counting | Not started | |
 | 8 | Seed the library | Not started | |
 | 9 | Dant AI | Not started | |
+| 9b | Make results delightful | Not started | Added in spec v2.1 |
 | 10 | Try before you pay | Not started | |
 | 11 | Creator Studio | Not started | |
 | 12 | Pro subscriptions | Not started | ⛔ Owner decides price first |
@@ -29,4 +30,5 @@ Status values: Not started · In progress · Waiting for owner's OK · Done
 
 Newest first. One short entry per step: date, what was built, anything left over.
 
+- 2026-10-05: Spec v2.1: interactive features added (§2a, Appendix C), plus new step 9b. Nothing built yet.
 - 2026-10-04: Plan v2 written (`docs/SPEC.md`). Nothing built yet.

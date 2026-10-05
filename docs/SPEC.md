@@ -1,6 +1,6 @@
-# Dant: Build Spec (v2)
+# Dant: Build Spec (v2.1)
 
-> **This is the source of truth.** v2 (2026-10-04) replaces the original prompt, which is kept in `docs/archive/SPEC-v1.md`. Everything that changed from v1, and why, is listed in Appendix B at the end.
+> **This is the source of truth.** v2 (2026-10-04) replaced the original prompt, which is kept in `docs/archive/SPEC-v1.md`. Changes from v1 are in Appendix B. v2.1 (2026-10-05) adds the interactive features in §2a, listed in Appendix C.
 > **How to use it:** don't paste this whole file into Cursor. Paste the short prompt in `docs/prompts/00-start-here.md`. It tells the assistant to read this file, build only the next step from §18, and record progress in `docs/PROGRESS.md`.
 
 ---
@@ -73,6 +73,51 @@ Why it's different from ChatGPT or Claude:
 
 ---
 
+## 2a. Make it feel alive (but never pushy)
+
+People should want to come back because Dant is fast, responsive, and a little delightful, not because it nags them. The interactive features below appear throughout the spec; this section sets the rules they all follow.
+
+### How it should feel
+
+- **Instant.**
+  - Pages load in under 1 second on a phone.
+  - Every tap visibly responds within 0.1 seconds: a pressed state, "Copied ✓", or a vote or follow that changes immediately and saves in the background, undoing itself with a short notice if saving fails.
+  - Use skeleton placeholders, not spinners.
+  - Start loading a page when someone hovers over or touches its link.
+- **Alive.** Show what the AI is doing as it happens (§9): steps tick off, "Built with" cards slide in, results stream in.
+- **Smooth.**
+  - Gentle transitions between pages (View Transitions, where the browser supports them).
+  - Cards lift slightly on hover, and panels slide up from the bottom on phones.
+  - All motion lasts under 250 ms.
+- **Calm.**
+  - Motion is subtle and has a purpose.
+  - If the device's "reduce motion" setting is on, turn animations off.
+  - No autoplaying sound or video, no pop-ups, no streaks, no fake urgency.
+- **Honest.**
+  - Every number, badge, and activity line is real. Never invent activity, counts, reviews, or "people are viewing this" messages.
+  - Hide a counter until the real number is worth showing (thresholds in config).
+- **Shortcuts for keen users.**
+  - "/" jumps to the big box from any page.
+  - Ctrl+K (⌘K on Mac) opens quick search.
+  - Esc closes panels.
+- **Reading still works without JavaScript** (§4). Interactivity is added on top.
+
+### Index of interactive features
+
+| Feature | Section | Built in step |
+|---|---|---|
+| Living placeholder, "/" shortcut, motion rules | §2a, §5 | 1 |
+| Live preview + readiness meter while uploading | §8 | 4 |
+| Before/after toggle, blanks highlighting | §6 | 5 |
+| Matching agents as you type, "Not sure what to ask?" picker, Peek, quick search | §5, §7 | 6 |
+| Your toolkit (save), Say thanks, creator badges | §12 | 7 |
+| Live plan, visible quality check, result previews, one-tap tweaks, pick your favorite, Try it here, personal home, real activity line | §5, §6, §9 | 9b |
+| Test it before you publish, AI-drafted examples, creator milestones, "Used today" | §8, §13 | 11 |
+| Repeat it (recurring tasks) | §10 | 13 |
+| Content calendar | §10 | 15 |
+
+---
+
 ## 3. Brand
 
 - Name: **dant** (lowercase wordmark).
@@ -105,7 +150,24 @@ Why it's different from ChatGPT or Claude:
   - An optional **"+ Add your website"** link. It adds a website field to this task (saved to the business card for Pro, §10).
   - For free accounts, a small calm counter: "4 of 5 free tasks left this month" (§14a).
 - **Enter sends; Shift+Enter adds a new line.** Sending opens the task page (`/ai/task/:id`). The box stays pinned at the bottom for follow-ups, like a chat.
-- **Below the fold:** "Top agents this week", "Trending Dants", and the topic tiles, which link into the Agents and Find tabs.
+- **Living placeholder.** While the box is empty and not focused, the placeholder types out real examples one after another ("Market my bakery on Instagram…", "Make my homepage look good on phones…"). It stops the moment the box is focused, and stays still when "reduce motion" is on.
+- **Matching agents as you type.** After a short pause in typing, up to 3 small cards appear under the box: "Dant will probably use: Small Business Marketing Agent · 94% worked".
+  - Tapping a card opens that agent. Pressing Enter still starts the task.
+  - This uses the library search only (no AI), so it's instant and free.
+- **"Not sure what to ask?"** A link under the chips opens a 3-tap picker:
+  1. What do you do? (shop, service business, creator, student, job seeker, other)
+  2. What do you need help with? (the relevant topics)
+  3. Pick a starter task.
+  - The chosen task fills the box, ready to send. No account needed.
+- **Personal home (logged-in users).** Above the chips, a "Continue" row shows:
+  - the last unfinished task,
+  - anything "Ready for your OK" (Pro),
+  - "Your toolkit" (saved agents and Dants, §12).
+  - Logged-out home stays clean.
+- **Below the fold:**
+  - "Top agents this week", "Trending Dants", and the topic tiles, which link into the Agents and Find tabs.
+  - **Real activity:** one slowly rotating line, e.g. "Someone just made a week of Instagram posts with Bakery Social Agent". It draws only on shared results or anonymous totals and never shows personal details.
+  - **Real counters:** "12,408 tasks done this week · 87% said it worked", shown only once the numbers pass the config thresholds (§2a).
 
 ---
 
@@ -126,6 +188,11 @@ Why it's different from ChatGPT or Claude:
     - Use each site's pre-filled-chat link format where one exists, and check it still works when building.
     - If there isn't one, or the text is too long for a link (over ~6,000 characters), copy it to the clipboard, open a new chat, and show: "Copied! Paste it in with Ctrl+V (⌘V on Mac)."
   - **Use with Dant AI:** starts a task with this agent pre-loaded.
+  - **Try it right here.** A small box on the page ("Try it: tell it about your business") runs this agent through Dant AI and shows the result right on the page.
+    - It counts as a task (§14a). A logged-out visitor's one free try works here too.
+  - **Before / after.** If the example includes a "without this agent" version, show a toggle (**Without · With this agent**) so people see the difference in one tap. Dant AI can draft both at upload (§8).
+  - **Blanks highlight.** As someone fills the blanks form, their words light up inside the agent text.
+  - **Save** (to "Your toolkit") and **Say thanks** (§12).
   - "Did it work?" Yes/No, comments, Remix, version history, and Report (§12, §15).
 
 ---
@@ -136,6 +203,8 @@ Why it's different from ChatGPT or Claude:
   - Search covers titles, descriptions, and content, and tolerates typos.
 - Filter by Dant type: **Prompt / Code / Information / Website.** Filters combine with topic and search.
 - **Top / New / Trending**, ranked by the rules in §12.
+- **Peek.** Every agent and Dant card has a "Peek" button (long-press on phones). It opens a slide-up panel with the first lines and the example result, without leaving the list. Copy, Save, and Use with Dant AI work right from the panel.
+- **Quick search** (Ctrl+K / ⌘K, or the search icon) works from any page and shows agents, Dants, and creators as you type.
 - **Dant page by type:**
   - **Prompt:** blanks form (same rules as agents), Copy button, Open in ChatGPT/Claude/Gemini.
   - **Code:**
@@ -165,6 +234,15 @@ Why it's different from ChatGPT or Claude:
   - **"How to tell it worked"** (optional but encouraged): 3–5 short checks, e.g. "Posts are under 150 words", "Mentions the business name", "Ends with a call to action". Dant AI uses these to check its own work (§9), and they power the creator's feedback (§13).
   - **Example result** (optional). If it's left empty, Dant AI can draft one for the creator to approve.
 - **Detected blanks preview:** shows which `[blanks]` were found. The creator can untick any that aren't really blanks.
+- **Live preview.** The card and the page update as the creator types: side by side on desktop, and as a Preview tab on phones.
+- **Readiness meter.** A simple ring, "Ready to publish: 4 of 6", with a short checklist:
+  - clear title, one-sentence description, and topic (these three are required),
+  - an example result, "How to tell it worked" checks, and confirmed blanks (these are recommended).
+- **Test it before you publish** (added in step 11):
+  - The creator runs their agent or prompt on a sample request inside Upload and sees the result.
+  - Dant AI suggests 1–3 improvements ("Add a blank for the business name?"), each with a one-tap Apply.
+  - Up to 3 test runs per item per day. They don't use the creator's tasks, but they do count toward the daily AI spending guard (§14e).
+  - Dant AI can also draft the example result and a "without this agent" version for the before/after toggle (§6). The creator approves or edits them.
 - **Preview before publishing.** Then **"Checking..."**: an automatic safety screen (§15). The item goes live, or is held for review with a plain explanation.
 - **Edits create a new version.** The creator writes a short note on what changed. Old versions stay viewable.
 - **Remix** opens Upload pre-filled with a copy. The new item shows "Remixed from [original] by [creator]" permanently.
@@ -213,6 +291,30 @@ Starts from the home page box, or from **"Use with Dant AI"** on any agent or Da
    - Offer **"Share this as a Dant and earn"**, which opens Upload pre-filled as a draft and is never published automatically.
    - Offer **"Share what Dant made"**: an opt-in public link with a "Made with Dant" footer that can be unshared anytime.
 
+### What the task page looks like (step 9b)
+
+The task page is where people decide whether they love Dant, so it should feel like watching a helper work, then handing them something they can use.
+
+- **The plan builds live.** Steps appear and tick off ✓ as they finish. "Built with" cards slide in as items are picked. One-line progress updates stream in. The page never sits frozen; if a step takes long, show what's happening ("Reading 6 pages of your website…").
+- **A visible quality check.** One line: "Checked against 4 creator checks ✓. Fixed 2 posts that were too long." Tap it to see each check.
+- **Results as previews, not walls of text:**
+  - **Social posts** look like a post card: business name, an image placeholder, the text, and hashtags. They sit in a swipeable row on phones and a grid on desktop.
+  - **Emails** look like an email: subject, preview line, and body.
+  - **Code changes** show before and after, side by side.
+  - **Step-by-step instructions** become a checklist people can tick off. The ticks are remembered on that task.
+  - Every piece has **Copy**, **Edit** (in place), and **Redo this one**.
+- **One-tap tweaks.** Chips under each piece: "Shorter", "Friendlier", "More professional", "Add emojis", "Different idea".
+  - A tweak updates just that piece, with **Undo** back to the previous version.
+  - Tweaks are free follow-ups inside the task (§14a).
+  - Beginners never need to know how to ask an AI.
+- **Pick your favorite.** For headlines and email subject lines, show 2–3 options side by side, and the user taps one. For Pro members, the choice also teaches the business card's tone of voice (§10).
+- **Take it with you:**
+  - "Copy all".
+  - "Download": a text file, with posts also as a calendar file that has suggested dates.
+  - "Email it to me".
+- **A thank-you moment.** Tapping "Yes, it worked" plays a small check animation in the accent color and says "Thanks! You just helped [creator names]. They'll see it."
+- **Try it here** on agent and Dant pages (§6) uses this same result view, in a compact size.
+
 ### Example: "Market my company"
 
 1. The user gives their website.
@@ -256,6 +358,13 @@ It should feel like handing a job to a capable helper, not operating a tool.
   - Users can view, edit, and delete every field at `/settings/memory`. Deleting is immediate and complete.
   - Dant never stores passwords or payment details in memory.
 - **Approval before anything goes public or live.** Posting, sending, or changing a site needs one **Approve** tap with a preview. There is never a "skip approval" setting.
+- **Repeat it** (step 13). After a task, Pro members can tap "Do this again every week" (or another schedule, e.g. every Monday at 8am).
+  - Dant runs the task on schedule, and each run waits for the user's OK before anything goes out.
+  - Repeats are listed on `/tasks` with Pause, Change, and Stop.
+  - Each run counts as one task.
+- **Content calendar** (step 15). Scheduled posts and emails appear on a week or month calendar at `/calendar`.
+  - Dragging an item to a new day or time reschedules it. The same safety box and approval rules apply.
+  - Free users can use "Download" (§9) to get a calendar file of their posts instead.
 
 ---
 
@@ -296,7 +405,19 @@ It should feel like handing a job to a capable helper, not operating a tool.
   - A Report button on every comment.
   - Rate limits on posting.
 - **Remix:** copies the item into Upload as a draft. The result shows "Remixed from" with a link and credit, forever.
-- **Follow creators.** Creator profile/channel pages show their agents and Dants, followers, total uses, and overall "It worked ✓" rate.
+- **Follow creators.** Creator profile/channel pages show their agents and Dants, followers, total uses, overall "It worked ✓" rate, and thanks received.
+- **Your toolkit.** People with an account can **Save** any agent or Dant.
+  - Saved items appear on the personal home (§5) and at `/toolkit`, with one-tap "Use with Dant AI".
+  - It's private.
+- **Say thanks.** One tap on any item (once per person per version), with an optional short note.
+  - The thanks goes to the creator's inbox and adds to the "thanks" count on their profile.
+  - It's warm, simple, and free. It's separate from "Did it work?", which measures quality.
+- **Creator badges** (earned automatically from real data, except Founding Creator, which an admin gives):
+  - **Founding Creator**
+  - **Top 10 in [topic]**
+  - **Highly rated:** 90%+ "It worked" with 100+ votes.
+  - **Fast fixer:** replied to feedback and published an improved version within 7 days.
+  - Badges show on profiles. Cards show at most one.
 - **Ranking (in plain words):**
   - **Top:** "It worked" rate adjusted for confidence (an item needs many votes before a high % is trusted, so 950/1000 beats 9/10, which beats 1/1) × how many people use it × a gentle recency boost.
     - Use the Wilson lower bound for the confidence adjustment and a log scale for uses. Keep the weights in config.
@@ -323,6 +444,8 @@ It should feel like handing a job to a capable helper, not operating a tool.
   - **"Improve with AI":** Dant AI reads the inbox and drafts the next version, fixing the top complaints. The creator reviews, edits, and publishes. It's never published automatically.
   - Payout history, and a **"Connect payouts"** button (Stripe Connect Express).
   - **Clear earnings:** show why an estimate is what it is, e.g. "212 uses × 91% worked → about $14.20 this month."
+  - **Used today:** "Your agents were used 37 times today" updates live, without refreshing.
+  - **Milestones:** a calm celebration card in Studio, and an email, at real milestones: first use, 100 uses, 1,000, 10,000, and first payout.
 - **Payouts:**
   - Monthly, with a minimum (default $10, config) and a ~30-day hold so refunds and fraud can be caught first.
   - **An admin approves each monthly payout batch before any money moves.**
@@ -341,15 +464,19 @@ People see Dant AI do real work before we ask for anything. We ask for an accoun
 | Dant AI tasks | 1 free try | 5 per month (resets on the 1st) | Up to 200 per month (fair use) |
 | Full plan + finished work to copy, checked for quality | Yes | Yes | Yes |
 | Browse, search, copy agents and Dants | Yes | Yes | Yes |
-| Vote, comment, upload, follow | No | Yes | Yes |
+| Vote, comment, upload, follow, save to toolkit, say thanks | No | Yes | Yes |
+| One-tap tweaks, pick your favorite, download, "Email it to me" | Yes | Yes | Yes |
 | "Let Dant do it for me" (post, send, schedule, suggest code changes) | No | No | Yes |
+| Repeat it (recurring tasks), content calendar | No | No | Yes |
 | Connect your stuff | No | No | Yes |
 | Dant remembers your business | No | No | Yes |
 | Works in the background while you do other things | No | No | Yes |
 
 - **All numbers live in one config file** (`config/plans.js`) so they can change without touching other code.
-- **One task = one goal** typed into the box or started from "Use with Dant AI".
-  - Follow-up questions and messages inside a task are free, up to 20 per task.
+- **One task = one goal** typed into the box, or started from "Use with Dant AI" or "Try it here".
+  - Follow-up questions, messages, and one-tap tweaks inside a task are free, up to 20 per task.
+  - A creator's "Test it before you publish" runs don't count as tasks (§8).
+  - "Email it to me" needs an email address, so a logged-out visitor gets the sign-up prompt.
   - Failed tasks are given back automatically.
 - **The free version is never made worse.** Same quality and the full result as Pro, with nothing hidden or blurred. The difference is what Dant does *for* you, not how good the work is.
 - **Logged out:**
@@ -456,12 +583,19 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - Placeholder Agents / Find / Upload pages and a friendly 404 page.
   - Light/dark mode with a toggle, and the brand (§3, using the placeholder if logos are missing).
   - The safety box component and base styles.
+  - **The feel (§2a):**
+    - The living placeholder and the "/" shortcut.
+    - Press states, skeleton placeholders, and page transitions.
+    - "Reduce motion" support.
   - Security headers (Appendix A2).
   - Playwright smoke tests (`npm test`).
 - **Done when:**
   - It runs locally and looks right at phone and desktop widths.
   - Everything works with the keyboard alone.
   - Light/dark works and is remembered.
+  - The placeholder stops typing when the box is focused.
+  - "/" jumps to the box.
+  - Turning on "reduce motion" stops all animation.
   - Tests pass.
 
 ### Step 2: Put it online
@@ -483,8 +617,9 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - Topics can be edited.
 
 ### Step 4: Upload
-- **Build:** §8 in full:
+- **Build:** §8, except "Test it before you publish" and AI-drafted examples (both step 11):
   - All 5 kinds, the blanks preview, the "How to tell it worked" checklist, and the example result.
+  - Live preview and the readiness meter.
   - Preview, publish, and screening (§15) with the admin review queue.
   - Versions, drafts, and safe website previews.
   - The honest earnings message.
@@ -500,11 +635,13 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
 - **Build:** §6 and §7 pages:
   - Rendered on the server, with blanks forms, Copy, Open in ChatGPT/Claude/Gemini, and the type-specific views.
   - Version history, "Remixed from", Report, and share preview cards.
+  - Blanks highlighting, and the before/after toggle (when the example has both versions).
   - "Use with Dant AI" as a placeholder.
 - **Done when:**
   - Pages show correctly even with JavaScript turned off.
   - An item containing `<script>` shows it as plain text and doesn't run it.
-  - Blanks fill live.
+  - Blanks fill live and light up in the text.
+  - The before/after toggle switches in one tap.
   - The long-text fallback for Open in... works.
 
 ### Step 6: Browse (Agents tab, Find tab, home sections)
@@ -514,21 +651,35 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - The ranking rules (§12).
   - The home page "Top agents this week" / "Trending Dants" sections.
   - Friendly empty states ("Be the first to share one" + Upload button).
+  - **Interactive (§2a):**
+    - Matching agents under the home box as you type.
+    - The "Not sure what to ask?" picker.
+    - Peek on cards, and quick search (Ctrl+K / ⌘K).
+    - Loading pages on hover.
 - **Done when:**
   - The ranking test passes (950/1000 > 9/10 > 1/1).
   - Search finds items despite a typo.
   - Filters combine.
+  - Typing "instagram posts for my bakery" shows matching agents within half a second, with no AI cost.
+  - The picker fills the box in 3 taps.
+  - Peek opens and closes without leaving the list.
 
 ### Step 7: Community and counting
 - **Build:** §12 and the counting part of §13:
   - Voting rules, "What went wrong?" going to the creator's inbox table, and comments (threads, pin, report, rate limits).
   - Remix, follows, and creator profile pages.
+  - Save / Your toolkit (`/toolkit`), Say thanks, and creator badges.
+  - Votes, follows, saves, and thanks update instantly on screen (§2a).
   - Use counting (deduplication, self-use, spikes), and reports in the admin queue.
 - **Done when:**
   - People can't vote without using the item, and only once per version.
   - Self-copies and a second copy on the same day don't count.
   - The pinned comment shows first.
   - Remix shows its credit.
+  - Saved items appear in the toolkit.
+  - Thanks reach the creator's inbox, once per person per version.
+  - Badges appear only when their real conditions are met.
+  - Instant updates undo themselves with a short notice if saving fails (test it by going offline).
 
 ### Step 8: Seed the library
 - **Build:**
@@ -538,7 +689,7 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
 - **Done when:** 20+ items are live.
 
 ### Step 9: Dant AI
-- **Build:** §9 in full:
+- **Build:** §9, except "What the task page looks like" (step 9b). Results can be plain cards with Copy for now.
   - The task page, `/tasks`, streaming progress, and "Built with" cards with reasons.
   - The self-check loop, Copy buttons, and "Did it work?".
   - Share as a Dant (draft) and share-result links.
@@ -551,6 +702,21 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - A planted "ignore your instructions" item has no effect.
   - The spending guard pauses at a tiny test limit.
   - The test set score is reported, so we can agree on a target.
+
+### Step 9b: Make results delightful
+- **Build:**
+  - §9 "What the task page looks like": the live plan, the visible quality check, and result previews (post cards, email previews, before/after code, checklists).
+  - Edit, Redo this one, one-tap tweaks with Undo, and pick your favorite.
+  - Copy all, Download (including the calendar file), Email it to me, and the thank-you moment.
+  - **Try it here** on agent and Dant pages (§6).
+  - **The personal home** "Continue" row, and the real activity line and counters (§5).
+- **Done when:**
+  - "Write a week of Instagram posts" shows post cards.
+  - "Shorter" on one post changes only that post, and Undo brings it back.
+  - Tweaks don't use up a task.
+  - Try it here works on an agent page, including as the logged-out free try.
+  - The downloaded calendar file opens in Google Calendar and Apple Calendar.
+  - The activity line and counters stay hidden below the config thresholds and never show personal details.
 
 ### Step 10: Try before you pay
 - **Build:** §14a in full, including the `/pro` waitlist page.
@@ -566,10 +732,16 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - Locked Pro buttons show the panel, and the server refuses forced Pro actions.
 
 ### Step 11: Creator Studio (no money yet)
-- **Build:** §13 Studio: stats, charts, the feedback inbox, "Improve with AI" drafts, earnings shown as "Coming soon", and feedback digest emails.
+- **Build:**
+  - §13 Studio: stats, charts, the feedback inbox, "Improve with AI" drafts, earnings shown as "Coming soon", and feedback digest emails.
+  - "Used today" (live) and milestone celebrations.
+  - In Upload (§8): **Test it before you publish** with one-tap suggestions, and AI-drafted example results and "without this agent" versions.
 - **Done when:**
   - Creators see only their own stats and feedback.
   - "Improve with AI" makes a draft that's never published automatically.
+  - A 4th test run on the same item on the same day is politely refused.
+  - Test runs don't use the creator's tasks.
+  - A milestone shows once and only once.
 
 ### Step 12: Pro subscriptions
 - **⛔ Ask the owner first:** §14b.
@@ -589,10 +761,13 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - The business card with auto-filled blanks, "Dant remembered" with Undo, and `/settings/memory`.
   - A background worker (a second Railway service) and "Ready for your OK" emails.
   - `/tasks` statuses and the approvals list.
+  - **Repeat it** (recurring tasks) with Pause, Change, and Stop.
 - **Done when:**
   - Closing the tab mid-task still finishes the task and sends the email.
   - Deleting memory removes it everywhere.
   - Free users see the Pro panel instead.
+  - A weekly repeat runs on time and waits for approval.
+  - Stopping it means no more runs.
 
 ### Step 14: Connections: website and GitHub
 - **Build:**
@@ -607,11 +782,12 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
   - Disconnect removes access.
 
 ### Step 15: Connections: Mailchimp and Meta
-- **Build:** §11 items 3–4, schedule-by-default, and honest Undo text.
+- **Build:** §11 items 3–4, schedule-by-default, honest Undo text, and the **content calendar** (§10) with drag to reschedule.
 - **Owner:** create the Mailchimp app and finish Meta setup (numbered steps).
 - **Done when:**
   - A Mailchimp scheduled campaign appears and can be unscheduled.
   - Meta works in test mode on the owner's own Page, or shows "Coming soon" if review isn't done.
+  - Dragging a scheduled post on the calendar asks for approval, then moves it on the real platform.
 
 ### Step 16: Creator payouts
 - **⛔ Ask the owner first:** §14c and the §13 threshold numbers, payout minimum, and hold period.
@@ -684,6 +860,12 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
 - **Batch API** (half price) for non-urgent work: re-screening, drafting example results, creator feedback summaries.
 - **Cost tracking:** record `usage` on every call, convert it to cost with the price table in config, and add it to the daily spend (§14e). Use a per-task cap (a task budget and max tries).
 - **Code checks:** the AI's own code-execution sandbox may test small snippets. Never `eval` or run user code on Dant's servers.
+- **Interactive features and cost:**
+  - "Matching agents as you type", Peek, and quick search use database search only, never the AI. Wait about 300 ms after typing stops before searching.
+  - One-tap tweaks and "Redo this one" regenerate only that piece, sending the piece plus the task's goal rather than the whole conversation, with low effort.
+  - "Try it here" is a normal task.
+  - "Test it before you publish" is one AI call plus one suggestions call, with `low` effort.
+- **Live updates** (progress, "Used today"): Server-Sent Events, which reconnect on their own. Keep the browser code small and plain.
 
 ### A2. Security
 
@@ -716,11 +898,11 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
 |---|---|
 | Accounts and topics | `profiles`, `topics` |
 | Library items | `items` (kind: agent / prompt / code / info / website; status: draft / checking / live / held / hidden / removed; `remixed_from`), `item_versions` (immutable: content, blanks, checklist, example, file, url, preview, change note) |
-| Community | `votes` (unique per user + version), `comments` (parent, pinned, status), `follows`, `reports` |
+| Community | `votes` (unique per user + version), `comments` (parent, pinned, status), `follows`, `reports`, `saves` (private), `thanks` (unique per user + version, optional note), `creator_badges` |
 | Usage | `uses` (unique per user + item + day; `for_pay`, `held`) |
-| Dant AI tasks | `tasks`, `task_messages`, `task_steps` (tries + check results), `task_credits` (version, role, reason), `task_actions` (preview, status, undo info) |
+| Dant AI tasks | `tasks`, `task_messages`, `task_steps` (tries + check results), `task_credits` (version, role, reason), `task_pieces` (each result piece + its earlier versions for tweak Undo + checklist ticks), `task_actions` (preview, status, undo info), `recurring_tasks` (schedule, paused) |
 | Pro features | `connections` (encrypted), `business_cards` |
-| Creators and money | `feedback`, `plan_usage` (user, month, tasks used), `subscriptions`, `earnings`, `payouts` |
+| Creators and money | `feedback`, `milestones` (shown once), `test_runs` (per item per day), `plan_usage` (user, month, tasks used), `subscriptions`, `earnings`, `payouts` |
 | Admin | `ai_spend` (by day), `waitlist` |
 
 ### A4. Environment variables (add each in the step that needs it)
@@ -768,3 +950,19 @@ Each step ends with: app runs, checks pass, `docs/PROGRESS.md` updated, plain su
 18. **Google can find Dant:** public pages are rendered on the server (§4).
 19. **Cursor won't lose track across chats:** progress is kept in `docs/PROGRESS.md`, with a short repeatable start prompt.
 20. **New quality features:** the "How to tell it worked" checklist, "Built with" reasons, the business card auto-filling blanks, "Improve with AI" for creators, a mic button, shareable results, and a follow-up "Did it work?" email.
+
+---
+
+## Appendix C: What v2.1 added (2026-10-05), and why
+
+The owner asked to "make the website more interactive so people want to use it." Everything below follows the §2a rules: fast, alive, calm, and honest. There are no streaks, no fake activity, and no pop-ups.
+
+1. **The first 10 seconds.** A living placeholder shows what's possible, matching agents appear as you type (the library proves its value before you press Enter), and a 3-tap picker helps people who don't know what to ask (§5).
+2. **The task page feels like watching a helper work.** The plan builds live, the quality check is visible, and results arrive as real-looking post cards, email previews, and checklists instead of a wall of text (§9, step 9b).
+3. **No prompting skills needed.** One-tap tweaks ("Shorter", "Friendlier", …) with Undo, plus "pick your favorite" for headlines (§9).
+4. **Try before you leave the page.** "Try it here" on every agent, and a before/after toggle that shows the difference in one tap (§6).
+5. **Reasons to come back.** A personal home with "Continue", a saved toolkit, "Repeat it" weekly tasks, and a content calendar (Pro) (§5, §10, §12).
+6. **Warmth between users and creators.** "Say thanks", a thank-you moment after "It worked", earned badges, and creator milestones (§9, §12, §13).
+7. **Creating is fun too.** Live preview, a readiness meter, and "Test it before you publish" with one-tap suggestions (§8).
+8. **Honest social proof only.** The real activity line and counters stay hidden until the numbers are meaningful (§2a, §5).
+9. **Cost-safe.** As-you-type features use the database, not the AI. Tweaks are small, free follow-ups inside a task. Creator test runs are capped (A1).
